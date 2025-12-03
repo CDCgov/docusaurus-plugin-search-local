@@ -164,11 +164,29 @@ function SearchResultItem({
   if (!isTitle) {
     pathItems.push((page as SearchDocument).t);
   }
+  // Extract anchor from document.h and apply it to document.u if needed
+  const getLinkUrl = () => {
+    if (!document.h) {
+      return document.u;
+    }
+    
+    // Check if document.h contains a query parameter with an anchor
+    const hashIndex = document.h.indexOf('#');
+    if (hashIndex !== -1) {
+      // Extract the anchor from document.h and apply it to document.u
+      const anchor = document.h.substring(hashIndex);
+      return document.u + anchor;
+    }
+    
+    // If no anchor found, use document.h as is
+    return document.h;
+  };
+
   return (
     <article className={styles.searchResultItem}>
       <h2>
         <Link
-          to={document.h ? document.h : document.u}
+          to={getLinkUrl()}
           dangerouslySetInnerHTML={{
             __html: isContent
               ? highlight(articleTitle, tokens)
